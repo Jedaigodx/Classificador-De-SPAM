@@ -48,3 +48,20 @@ y_pred = model.predict(x_test)
 print("Acurácia",accuracy_score(y_test,y_pred))
 print("\nrelatório de classificação:\n",classification_report(y_test,y_pred,target_names=['ham','spam']))
 print("\nMatriz de confusão:\n",confusion_matrix(y_test,y_pred))
+
+#função para textar mensagens novas
+def testar_mensagem(texto):
+    texto_limpo = clean_text(texto)
+    vector = vectorizer.transform([texto_limpo])
+    previsao = model.predict(vector)[0]
+    probabilidade = model.predict_proba(vector).max()
+    print(f"\nMensage:{texto}")
+    print(f"\nClassificação: {previsao} (confianca: {probabilidade:.2%})")
+
+#Input de novas mensagens
+
+while True:
+    msg = input("\nDigite uma mensagem para testar (Ou 'sair', para encerrar):")
+    if msg.lower()=='sair':
+        break
+    testar_mensagem(msg) 
