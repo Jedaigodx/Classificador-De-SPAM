@@ -11,8 +11,6 @@ df = pd.read_csv('spam.csv', encoding='latin-1')
 df = df[['v1','v2']]
 df.columns = ['label','message']
 
-print("Dados originais:")
-print(df.head())
 
 #função limpar limpar textos
 def clean_text(text):
@@ -25,15 +23,12 @@ def clean_text(text):
 # limpando dados inuteis
 df['clean'] = df['message'].apply(clean_text)
 
-print("\nExemplo de mensagem limpa:")
-print(df[['message', 'clean']].head())
-
 #transformando texto em números
 vectorizer = TfidfVectorizer(stop_words='english',max_features=2000)
 x = vectorizer.fit_transform(df['clean'])
 y = df['label'].map({'ham':0,'spam':1})
 
-print("\nFormato da matriz:", x.shape)
+#print("\nFormato da matriz:", x.shape)
 
 #dividindo treino e teste
 x_train, x_test,y_train,y_test = train_test_split(x,y,test_size=0.2,random_state=42,stratify=y)
@@ -53,10 +48,13 @@ print("\nMatriz de confusão:\n",confusion_matrix(y_test,y_pred))
 def testar_mensagem(texto):
     texto_limpo = clean_text(texto)
     vector = vectorizer.transform([texto_limpo])
-    previsao = model.predict(vector)[0]
+    previsao_num = str(model.predict(vector)[0])
     probabilidade = model.predict_proba(vector).max()
-    print(f"\nMensage:{texto}")
-    print(f"\nClassificação: {previsao} (confianca: {probabilidade:.2%})")
+
+    if previsao_num == 1:
+        print(f"Classificação: SPAM 🚨 (Confiança: {probabilidade:.2%})")
+    else:
+        print(f"Classificação: HAM ✅ (Confiança: {probabilidade:.2%})")
 
 #Input de novas mensagens
 
